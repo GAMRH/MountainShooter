@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from Model.Const import WIN_HEIGHT,WIN_WEIGHT,COLOR_ORANGE, COLOR_WHITE, MENU_OPTION
+from Model.Const import WIN_WEIGHT,COLOR_ORANGE, COLOR_WHITE, MENU_OPTION
 import pygame as pg
 from pygame import Surface, Rect
 from pygame.font import Font
