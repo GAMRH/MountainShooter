@@ -1,8 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys, random
+from tkinter.font import Font
 from Model.entity import Entity
 from Model.entityFactory import EntityFactory
+from Model.Const import COLOR_WHITE, EVENT_ENEMY, MENU_OPTION, SPAWN_TIME, WIN_HEIGHT
 import pygame as pg
 class Level:
     def __init__(self, window, name, game_mode):
@@ -11,10 +14,37 @@ class Level:
         self.game_mode = game_mode
         self.entity_list: list[Entity] = []
         self.entity_list.extend(EntityFactory.get_entity('Level1Bg'))
+        self.entity_list.append(EntityFactory.get_entity('Player1'))
+        self.timeout = 20000
         
+        if game_mode in [MENU_OPTION[1], MENU_OPTION[2]]:
+            self.entity_list.append(EntityFactory.get_entity('Player2'))
+        pg.time.set_timer(EVENT_ENEMY, SPAWN_TIME)    
     def run(self):
+        pg.mixer_music.load(f'./asset/{self.name}.mp3')
+        pg.mixer_music.play(-1)
+        clock = pg.time.Clock()
         while True:
+            clock.tick(60)
             for ent in self.entity_list:
                 self.window.blit(source=ent.surf, dest=ent.rect)
                 ent.move()
+            for event in pg.event.get():
+                if event.type == EVENT_ENEMY:
+                    choice = random.choice(('Enemy1', 'Enemy2'))
+                    self.entity_list.append(EntityFactory.get_entity(choice))
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    sys.exit()
+                    
+            self.level_text(14, f'{self.name} - Timeout: {self.timeout / 1000 :.1f}s', COLOR_WHITE, (10,5))
+            self.level_text(14, f'FPS: {clock.get_fps() :.0f}', COLOR_WHITE, (10, WIN_HEIGHT - 35))
+            self.level_text(14, f'Entidades: {len(self.entity_list)}', COLOR_WHITE, (10, WIN_HEIGHT - 20))
             pg.display.flip()
+        pass
+    
+    def level_text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
+        text_font: Font = pg.font.SysFont(name="Lucida Sans Typewriter", size=text_size)
+        text_surf: pg.Surface = text_font.render(text, True, text_color).convert_alpha()
+        text_rect: pg.Rect = text_surf.get_rect(left=text_pos[0], top=text_pos[1])
+        self.window.blit(source=text_surf, dest=text_rect)

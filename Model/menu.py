@@ -7,7 +7,7 @@ from pygame.font import Font
 class Menu:
     def __init__(self, window):
         self.window = window
-        self.surf = pg.image.load('./asset/MenuBg.png')
+        self.surf = pg.image.load('./asset/MenuBg.png').convert_alpha()
         self.rect = self.surf.get_rect(left=0, top=0)
 
     def run(self, ):
@@ -19,6 +19,7 @@ class Menu:
             self.window.blit(source=self.surf, dest=self.rect)
             self.menu_text(40, "Mountain", (COLOR_BROWN), ((WIN_WIDTH / 2,70)))
             self.menu_text(40, "Shooter", (COLOR_BROWN), ((WIN_WIDTH / 2,120)))
+            
             for i in range(len(MENU_OPTION)):
                 if i == menu_option:
                     self.menu_text(20, MENU_OPTION[i], COLOR_YELLOW, ((WIN_WIDTH / 2), 180 + 30 * i))
