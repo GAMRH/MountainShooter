@@ -3,10 +3,14 @@
 
 import sys, random
 from tkinter.font import Font
+from Model.entitymediator import EntityMediator
+from Model.enemy import Enemy
 from Model.entity import Entity
 from Model.entityFactory import EntityFactory
 from Model.Const import COLOR_WHITE, EVENT_ENEMY, MENU_OPTION, SPAWN_TIME, WIN_HEIGHT
 import pygame as pg
+
+from Model.player import Player
 class Level:
     def __init__(self, window, name, game_mode):
         self.window = window
@@ -29,6 +33,10 @@ class Level:
             for ent in self.entity_list:
                 self.window.blit(source=ent.surf, dest=ent.rect)
                 ent.move()
+                if isinstance (ent, (Player, Enemy)):
+                    shoot = ent.shoot()
+                    if shoot is not None:
+                        self.entity_list.append(shoot)
             for event in pg.event.get():
                 if event.type == EVENT_ENEMY:
                     choice = random.choice(('Enemy1', 'Enemy2'))
@@ -41,6 +49,9 @@ class Level:
             self.level_text(14, f'FPS: {clock.get_fps() :.0f}', COLOR_WHITE, (10, WIN_HEIGHT - 35))
             self.level_text(14, f'Entidades: {len(self.entity_list)}', COLOR_WHITE, (10, WIN_HEIGHT - 20))
             pg.display.flip()
+            # Collisions
+            EntityMediator.verify_collision(entity_list=self.entity_list)
+            EntityMediator.verify_health(entity_list=self.entity_list)
         pass
     
     def level_text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
