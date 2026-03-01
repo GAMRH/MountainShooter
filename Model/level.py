@@ -7,7 +7,7 @@ from Model.entitymediator import EntityMediator
 from Model.enemy import Enemy
 from Model.entity import Entity
 from Model.entityFactory import EntityFactory
-from Model.Const import COLOR_WHITE, EVENT_ENEMY, MENU_OPTION, SPAWN_TIME, WIN_HEIGHT
+from Model.Const import COLOR_CYAN, COLOR_GREEN, COLOR_WHITE, EVENT_ENEMY, MENU_OPTION, SPAWN_TIME, WIN_HEIGHT
 import pygame as pg
 
 from Model.player import Player
@@ -37,6 +37,10 @@ class Level:
                     shoot = ent.shoot()
                     if shoot is not None:
                         self.entity_list.append(shoot)
+                if ent.name == 'Player1':
+                    self.level_text(14, f'Player1 - Health: {ent.health} | Score {ent.score}', COLOR_GREEN, (10,25))
+                if ent.name == 'Player2':
+                    self.level_text(14, f'Player2 - Health: {ent.health} | Score {ent.score}', COLOR_CYAN, (10,45))
             for event in pg.event.get():
                 if event.type == EVENT_ENEMY:
                     choice = random.choice(('Enemy1', 'Enemy2'))
@@ -44,7 +48,7 @@ class Level:
                 if event.type == pg.QUIT:
                     pg.quit()
                     sys.exit()
-                    
+
             self.level_text(14, f'{self.name} - Timeout: {self.timeout / 1000 :.1f}s', COLOR_WHITE, (10,5))
             self.level_text(14, f'FPS: {clock.get_fps() :.0f}', COLOR_WHITE, (10, WIN_HEIGHT - 35))
             self.level_text(14, f'Entidades: {len(self.entity_list)}', COLOR_WHITE, (10, WIN_HEIGHT - 20))
